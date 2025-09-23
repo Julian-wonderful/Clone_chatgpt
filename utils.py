@@ -2,14 +2,14 @@ import requests
 import json
 
 
-def get_chat_response(prompt, siliconflow_api_key):
+def get_chat_response(messages, siliconflow_api_key):
     # 构造请求数据
     url = "https://api.siliconflow.cn/v1/chat/completions"
 
     # 硅基流动API的请求参数
     payload = {
         "model": "Qwen/Qwen3-Next-80B-A3B-Instruct",
-        "messages": [{"role": "user", "content": prompt}],
+        "messages": messages,
         "temperature": 0.7
     }
 
