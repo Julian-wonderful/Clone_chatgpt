@@ -6,12 +6,16 @@ st.title("💬 智能AI助手")
 with st.sidebar:
     siliconflow_api_key = st.text_input("请输入硅基流动API Key：", type="password")
     st.markdown("[获取硅基流动API key](https://siliconflow.cn/console/api-keys)")
+    
+    # 添加重试次数设置（可选）
+    max_retries = st.slider("最大重试次数", 1, 5, 3)
+    
     # 添加“新对话”按钮
     if st.button("新对话"):
         st.session_state["messages"] = [
             {"role": "ai", "content": "你好，我是你的AI助手，有什么可以帮你的吗？"}
         ]
-        st.rerun()  # 重新运行以刷新界面
+        st.rerun()
 
 # 初始化对话历史
 if "messages" not in st.session_state:
@@ -36,7 +40,7 @@ if prompt:
 
     # 获取AI响应
     with st.spinner("AI正在思考中，请稍等..."):
-        response = get_chat_response(prompt, siliconflow_api_key)
+        response = get_chat_response(prompt, siliconflow_api_key, max_retries)
 
     # 添加AI响应到显示列表
     st.session_state["messages"].append({"role": "ai", "content": response})
