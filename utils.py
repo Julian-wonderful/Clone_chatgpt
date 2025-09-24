@@ -21,7 +21,7 @@ def get_chat_response(messages, siliconflow_api_key):
 
     try:
         # 发送POST请求到硅基流动API
-        response = requests.post(url, json=payload, headers=headers, timeout=30)
+        response = requests.post(url, json=payload, headers=headers, timeout=60)
         
         # 检查HTTP状态码
         if response.status_code == 400:
