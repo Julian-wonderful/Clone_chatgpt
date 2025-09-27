@@ -39,17 +39,8 @@ if prompt:
     st.chat_message("human").write(prompt)
 
     # 获取AI响应
-    # 提取历史对话用于传递给API
-    # 只提取用户和AI的消息，避免重复添加
-    history = []
-    for msg in st.session_state["messages"]:
-        if msg["role"] in ["human", "ai"]:
-            history.append({"role": msg["role"], "content": msg["content"]})
-    
-    # 确保历史对话正确传递
     with st.spinner("AI正在思考中，请稍等..."):
-        # 将历史对话传递给API
-        response = get_chat_response(prompt, siliconflow_api_key, max_retries, history)
+        response = get_chat_response(prompt, siliconflow_api_key, max_retries)
 
     # 添加AI响应到显示列表
     st.session_state["messages"].append({"role": "ai", "content": response})
