@@ -1,43 +1,18 @@
 import requests
 import json
 import time
-from typing import Optional, List, Dict
+from typing import Optional
 
 
-def get_chat_response(prompt: str, siliconflow_api_key: str, max_retries: int = 3, history: List[Dict] = None) -> str:
-    """
-    向硅基流动API发送请求并获取响应。
-    
-    Args:
-        prompt: 用户输入的提示词
-        siliconflow_api_key: 硅基流动API密钥
-        max_retries: 最大重试次数
-        history: 包含对话历史的列表，每个元素为包含role和content的字典
-    
-    Returns:
-        AI的回复内容
-    """
+def get_chat_response(prompt: str, siliconflow_api_key: str, max_retries: int = 3) -> str:
     # 构造请求数据
     url = "https://api.siliconflow.cn/v1/chat/completions"
-
-    # 构建消息列表，包含历史对话
-    messages = []
-    
-    # 确保历史对话不为空
-    if history:
-        # 过滤掉无效的历史记录
-        valid_history = [msg for msg in history if isinstance(msg, dict) and 'role' in msg and 'content' in msg]
-        messages.extend(valid_history)
-    
-    # 添加当前用户消息
-    messages.append({"role": "user", "content": prompt})
 
     # 硅基流动API的请求参数
     payload = {
         "model": "Qwen/Qwen3-Next-80B-A3B-Instruct",
-        "messages": messages,
-        "temperature": 0.7,
-        "stream": False  # 禁用流式输出，避免可能的问题
+        "messages": [{"role": "user", "content": prompt}],
+        "temperature": 0.7
     }
 
     headers = {
@@ -83,18 +58,6 @@ def get_chat_response(prompt: str, siliconflow_api_key: str, max_retries: int = 
                 continue
             return error_msg
 
-        except requests.exceptions.HTTPError as e:
-            # 更详细的HTTP错误处理
-            if response.status_code == 400:
-                return f"请求参数错误 (400): 请检查API密钥和请求格式"
-            elif response.status_code == 401:
-                return f"未授权访问 (401): 请检查API密钥是否正确"
-            elif response.status_code == 403:
-                return f"访问被拒绝 (403): 请检查API密钥权限"
-            elif response.status_code == 429:
-                return f"请求过于频繁 (429): 请稍后重试"
-            else:
-                return f"HTTP错误 {response.status_code}: {str(e)}"
         except requests.exceptions.RequestException as e:
             return f"网络请求错误: {str(e)}"
 
